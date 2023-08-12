@@ -1,7 +1,8 @@
 import { type FC } from 'react';
 
-import { ClerkProvider } from '@clerk/nextjs';
 import { Inter } from 'next/font/google';
+
+import { ClerkProvider } from '@clerk/nextjs';
 
 import '../globals.css';
 
@@ -17,14 +18,18 @@ interface Props {
 
 const inter = Inter({ subsets: ['latin'] }); // definimos la fuente que queremos usar
 
-const LayoutAuth: FC<Props> = ({ children }) => {
+const RootLayout: FC<Props> = ({ children }) => {
   return (
     <ClerkProvider>
       <html lang='es'>
-        <body className={`${inter.className} bg-dark-1`}>{children}</body>
+        <head>
+          <link rel='icon' href='/favicon.ico' sizes='any' />
+        </head>
+        {/* llamamos la clase de la fuente en nuestro body */}
+        <body className={`${inter.className}`}>{children}</body>
       </html>
     </ClerkProvider>
   );
 };
 
-export default LayoutAuth;
+export default RootLayout;
