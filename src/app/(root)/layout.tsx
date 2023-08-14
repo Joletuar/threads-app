@@ -33,7 +33,8 @@ const RootLayout: FC<Props> = ({ children }) => {
         {/* llamamos la clase de la fuente en nuestro body */}
         <body className={`${inter.className}`}>
           <Topbar />
-          <main>
+
+          <main className='flex'>
             <LeftSidebar />
 
             <section className='main-container'>

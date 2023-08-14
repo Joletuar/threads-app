@@ -9,7 +9,7 @@ import { SignOutButton, SignedIn } from '@clerk/clerk-react';
 
 export const LeftSidebar = () => {
   const router = useRouter(); // solo funciona en componentes de cliente, por lo que se debe de activar el "use client"
-  const pathname = usePathname();
+  const pathname = usePathname(); // solo funciona en componentes de cliente, por lo que se debe de activar el "use client"
 
   return (
     <section className='custom-scrollbar leftsidebar'>
