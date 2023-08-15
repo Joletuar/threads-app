@@ -1,6 +1,6 @@
 'use client';
 
-import type { ChangeEvent, FC } from 'react';
+import { type ChangeEvent, type FC, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -8,11 +8,9 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
@@ -20,10 +18,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { UserValidation } from '@/lib/validations/user';
 import * as z from 'zod';
+import { Textarea } from '../ui/textarea';
 
 interface Props {
   user: {
-    id: string;
+    id: string | undefined;
     objectId: string;
     username: string;
     name: string;
@@ -33,12 +32,17 @@ interface Props {
   btnTitle: string;
 }
 
-const defaultValues = { image: '', name: '', username: '', bio: '' };
-
 export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
+  const [files, setFiles] = useState<File[]>([]);
+
   const form = useForm({
     resolver: zodResolver(UserValidation), // propiedad que nos permite agregar un validador externo
-    defaultValues,
+    defaultValues: {
+      image: user?.image || '',
+      name: user?.name || '',
+      username: user?.username || '',
+      bio: user?.bio || '',
+    },
   });
 
   const onSubmit = (values: z.infer<typeof UserValidation>) => {
@@ -48,10 +52,37 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
   };
 
   const handleImage = (
-    e: ChangeEvent,
+    e: ChangeEvent<HTMLInputElement>,
     fieldChange: (value: string) => void
   ) => {
     e.preventDefault();
+
+    // Crear una nueva instancia para leer archivos
+    const fileReader = new FileReader();
+
+    // Verificar si se seleccionaron archivos
+    if (e.target.files && e.target.files.length) {
+      // Obtener el primer archivo seleccionado
+      const file = e.target.files[0];
+
+      // Verificar si el archivo es una imagen
+      if (!file.type.includes('image')) return;
+
+      // Almacenar la lista de archivos seleccionados
+      setFiles(Array.from(e.target.files));
+
+      // Definir qué hacer cuando se cargue el archivo
+      fileReader.onload = async (event) => {
+        // Obtener la URL en formato de datos (Data URL) de la imagen
+        const imageDataUrl = event.target?.result?.toString() || '';
+
+        // Llamar a la función fieldChange y pasarle la URL de la imagen
+        fieldChange(imageDataUrl);
+      };
+
+      // Leer y convertir el archivo a una URL en formato de datos (Data URL)
+      fileReader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -60,6 +91,7 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className='flex flex-col gap-10 justify-start'
       >
+        {/* profile photo */}
         <FormField
           control={form.control}
           name='image'
@@ -95,14 +127,74 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
+            </FormItem>
+          )}
+
+          // Nombre
+        />
+        <FormField
+          control={form.control}
+          name='name'
+          render={({ field }) => (
+            <FormItem className='flex gap-3 flex-col'>
+              <FormLabel className='text-base-semibold text-light-2'>
+                Nombre
+              </FormLabel>
+              <FormControl className='flex-1 text-base-semibold text-gray-200'>
+                <Input
+                  type='text'
+                  className='account-form_input no-focus'
+                  {...field}
+                />
+              </FormControl>
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+        {/* username */}
+
+        <FormField
+          control={form.control}
+          name='username'
+          render={({ field }) => (
+            <FormItem className='flex gap-3 flex-col'>
+              <FormLabel className='text-base-semibold text-light-2'>
+                Usuario
+              </FormLabel>
+              <FormControl className='flex-1 text-base-semibold text-gray-200'>
+                <Input
+                  type='text'
+                  className='account-form_input no-focus'
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {/* bio */}
+
+        <FormField
+          control={form.control}
+          name='bio'
+          render={({ field }) => (
+            <FormItem className='flex gap-3 flex-col'>
+              <FormLabel className='text-base-semibold text-light-2'>
+                Sobre tí
+              </FormLabel>
+              <FormControl className='flex-1 text-base-semibold text-gray-200'>
+                <Textarea
+                  rows={10}
+                  className='account-form_input no-focus'
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <Button type='submit' className='bg-primary-500'>
+          Guardar
+        </Button>
       </form>
     </Form>
   );
