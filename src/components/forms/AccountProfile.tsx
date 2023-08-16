@@ -4,6 +4,14 @@ import { type ChangeEvent, type FC, useState } from 'react';
 
 import Image from 'next/image';
 
+import { isBase64Image } from '@/lib/utils';
+import { UserValidation } from '@/lib/validations/user';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+import { useUploadThing } from '@/lib/uploadthing';
+
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -12,13 +20,8 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import { UserValidation } from '@/lib/validations/user';
-import * as z from 'zod';
 import { Textarea } from '../ui/textarea';
+import { Input } from '@/components/ui/input';
 
 interface Props {
   user: {
@@ -35,6 +38,8 @@ interface Props {
 export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
   const [files, setFiles] = useState<File[]>([]);
 
+  const { startUpload } = useUploadThing('media');
+
   const form = useForm({
     resolver: zodResolver(UserValidation), // propiedad que nos permite agregar un validador externo
     defaultValues: {
@@ -44,12 +49,6 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
       bio: user?.bio || '',
     },
   });
-
-  const onSubmit = (values: z.infer<typeof UserValidation>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  };
 
   const handleImage = (
     e: ChangeEvent<HTMLInputElement>,
@@ -83,6 +82,26 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
       // Leer y convertir el archivo a una URL en formato de datos (Data URL)
       fileReader.readAsDataURL(file);
     }
+  };
+
+  const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+    // obtenemos el valor de la image
+    const blob = values.image;
+
+    // verificamos si la imagen que tenemos en perfil
+    // es una url que nos dió el proveedor con el nos
+    // logeamos, o es una imagen que subimos nosotros
+    const hasImageChanged = isBase64Image(blob);
+
+    if (hasImageChanged) {
+      const imageResp = await startUpload(files);
+
+      if (imageResp && imageResp[0].fileUrl) {
+        values.image = imageResp[0].fileUrl;
+      }
+    }
+
+    // TODO: subir la foto actualizada
   };
 
   return (
