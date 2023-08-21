@@ -1,3 +1,5 @@
+'user server';
+
 import { connectToDB } from '../mongoose';
 import ThreadModel from '../models/thread.models';
 import UserModel from '../models/user.model';
@@ -19,7 +21,6 @@ export async function createThread({
   await connectToDB();
 
   try {
-
     // creamos un nuevo thread
     const newThread = await ThreadModel.create({
       text,
@@ -33,8 +34,7 @@ export async function createThread({
     });
 
     // revalidamos el path
-    revalidatePath(pathname)
-
+    revalidatePath(pathname);
   } catch (error: any) {
     throw new Error(`Failed to createa new thread: ${error?.message}`);
   }
