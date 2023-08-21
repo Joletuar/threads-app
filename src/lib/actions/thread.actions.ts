@@ -36,6 +36,46 @@ export async function createThread({
     // revalidamos el path
     revalidatePath(pathname);
   } catch (error: any) {
-    throw new Error(`Failed to createa new thread: ${error?.message}`);
+    throw new Error(`Failed to create new thread: ${error?.message}`);
+  }
+}
+
+export async function fetchPost(pageNumber = 1, pageSize = 20) {
+  await connectToDB();
+
+  // calculamos el offset o número de registros que debemos de saltarnos
+  const offset = (pageNumber - 1) * pageSize;
+
+  try {
+    // obtener todos los threads que no tienen padres, es decir, los threads principales
+    const postsQuery = ThreadModel.find({
+      parentId: { $in: [null, undefined] },
+    }); // el método find devuelve un query, si se usa el await es lo mismo que usar el .exec
+
+    // número total de posts
+    const totalPostCount = await postsQuery.countDocuments();
+
+    // resultado final aplicando todos los querys
+    const posts = await postsQuery
+      .sort({ createdAt: 'desc' }) // ordenamos de manera descendente por fecha de creación
+      .skip(offset) // numero de registros a saltarnos
+      .limit(pageSize) // número máximo de registros obtener
+      .populate({ path: 'author', model: 'UserModel' }) // obtenemos los datos del usuario a partir de la referencia
+      .populate({
+        path: 'children',
+        model: 'ThreadModel',
+        populate: {
+          path: 'author',
+          model: 'UserModel',
+          select: ['_id', 'parentId', 'image'],
+        },
+      });
+
+    // determinamos si tenemos o no siguiente página
+    const isNext = totalPostCount > offset + posts.length;
+
+    return { posts, isNext };
+  } catch (error: any) {
+    throw new Error(`Failed to get posts: ${error?.message}`);
   }
 }
