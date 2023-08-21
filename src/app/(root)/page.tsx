@@ -1,6 +1,8 @@
+import { currentUser } from '@clerk/nextjs';
+
 import { fetchPosts } from '@/lib/actions/thread.actions';
 
-import { currentUser } from '@clerk/nextjs';
+import { ThreadCard } from '@/components/cards/ThreadCard';
 
 export default async function Home() {
 
@@ -8,7 +10,7 @@ export default async function Home() {
   const user = await currentUser();
 
   // obtenemos los threads
-  const { posts } = await fetchPosts(1, 30);
+  const {posts} = await fetchPosts(1, 30);
 
   return (
     <div>
@@ -21,14 +23,14 @@ export default async function Home() {
           <>
             {posts.map((post) => (
               <ThreadCard
-                key={post._id}
-                id={post._id}
-                currentUserId={user?.id}
-                parentId={post.parentId}
+                key={post._id.toString()}
+                id={post._id.toString()}
+                currentUserId={user?.id || ""}
+                parentId={post.parentId?.toString()}
                 content={post.text}
                 author={post.author}
                 community={post.community}
-                createAt={post.createdAt}
+                createAt={post.createdAt.toLocaleString()}
                 comments={post.children}
               />
             ))}
