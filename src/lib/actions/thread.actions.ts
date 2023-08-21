@@ -40,7 +40,7 @@ export async function createThread({
   }
 }
 
-export async function fetchPost(pageNumber = 1, pageSize = 20) {
+export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   await connectToDB();
 
   // calculamos el offset o número de registros que debemos de saltarnos
