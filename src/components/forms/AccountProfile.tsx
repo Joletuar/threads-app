@@ -3,6 +3,7 @@
 import { type ChangeEvent, type FC, useState } from 'react';
 
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 
 import { isBase64Image } from '@/lib/utils';
 import { UserValidation } from '@/lib/validations/user';
@@ -19,13 +20,15 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '../ui/textarea';
 import { Input } from '@/components/ui/input';
+import { updateUser } from '@/lib/actions/user.actions';
 
 interface Props {
   user: {
-    id: string | undefined;
+    id: string;
     objectId: string;
     username: string;
     name: string;
@@ -39,6 +42,9 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
   const [files, setFiles] = useState<File[]>([]);
 
   const { startUpload } = useUploadThing('media');
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   const form = useForm({
     resolver: zodResolver(UserValidation), // propiedad que nos permite agregar un validador externo
@@ -101,7 +107,17 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
       }
     }
 
-    // TODO: subir la foto actualizada
+    // actualizamos la información del usuario
+    await updateUser({ ...values, pathname, userId: user.id });
+
+    // si la ruta es de página de edición volvemos atrás, caso contrario redireccionamos al home
+    if (pathname === '/profile/edit') {
+      router.back();
+    } else {
+      router.push('/');
+    }
+
+    // TODO: agregar las env de uploadthing
   };
 
   return (
@@ -111,6 +127,7 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
         className='flex flex-col gap-10 justify-start'
       >
         {/* profile photo */}
+
         <FormField
           control={form.control}
           name='image'
@@ -146,11 +163,13 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
-
-          // Nombre
         />
+
+        {/* Nombre */}
+
         <FormField
           control={form.control}
           name='name'
@@ -166,9 +185,11 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
+
         {/* username */}
 
         <FormField
@@ -186,6 +207,7 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -207,6 +229,7 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
