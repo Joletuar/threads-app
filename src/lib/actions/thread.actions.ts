@@ -1,8 +1,8 @@
-'user server';
+'use server';
 
 import { connectToDB } from '../mongoose';
-import ThreadModel from '../models/thread.models';
-import UserModel from '../models/user.model';
+import Thread from '../models/thread.models';
+import User from '../models/user.model';
 import { revalidatePath } from 'next/cache';
 
 interface Params {
@@ -22,14 +22,14 @@ export async function createThread({
 
   try {
     // creamos un nuevo thread
-    const newThread = await ThreadModel.create({
+    const newThread = await Thread.create({
       text,
       author,
       community: communityId,
     });
 
     // actualizamos la lista de id de threads y añadimos el nuevo thread creado
-    await UserModel.findByIdAndUpdate(author, {
+    await User.findByIdAndUpdate(author, {
       $push: { threads: newThread._id },
     });
 
@@ -48,28 +48,30 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 
   try {
     // obtener todos los threads que no tienen padres, es decir, los threads principales
-    const postsQuery = ThreadModel.find({
+    const postsQuery = Thread.find({
       parentId: { $in: [null, undefined] },
     }); // el método find devuelve un query, si se usa el await es lo mismo que usar el .exec
-
-    // número total de posts
-    const totalPostCount = await postsQuery.countDocuments();
 
     // resultado final aplicando todos los querys
     const posts = await postsQuery
       .sort({ createdAt: 'desc' }) // ordenamos de manera descendente por fecha de creación
       .skip(offset) // numero de registros a saltarnos
       .limit(pageSize) // número máximo de registros obtener
-      .populate({ path: 'author', model: 'UserModel' }) // obtenemos los datos del usuario a partir de la referencia
+      .populate({ path: 'author', model: 'User' }) // obtenemos los datos del usuario a partir de la referencia
       .populate({
         path: 'children',
-        model: 'ThreadModel',
+        model: 'Thread',
         populate: {
           path: 'author',
-          model: 'UserModel',
+          model: 'User',
           select: ['_id', 'parentId', 'image'],
         },
       });
+
+    // número total de posts
+    const totalPostCount = await Thread.find({
+      parentId: { $in: [null, undefined] },
+    }).countDocuments();
 
     // determinamos si tenemos o no siguiente página
     const isNext = totalPostCount > offset + posts.length;

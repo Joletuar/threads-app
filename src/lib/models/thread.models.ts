@@ -8,7 +8,7 @@ const threadSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: 'UserModel',
+      ref: 'User',
       required: true,
     },
     community: { type: Schema.Types.ObjectId, ref: 'Community' },
@@ -17,8 +17,8 @@ const threadSchema = new Schema(
     },
     children: [
       {
-        types: Schema.Types.ObjectId,
-        ref: 'ThreadModel',
+        type: Schema.Types.ObjectId,
+        ref: 'Thread',
       },
     ],
   },
@@ -27,6 +27,6 @@ const threadSchema = new Schema(
   }
 );
 
-const ThreadModel = models.ThreadModel && model('ThreadModel', threadSchema);
+const Thread = models.Thread || model('Thread', threadSchema);
 
-export default ThreadModel;
+export default Thread;

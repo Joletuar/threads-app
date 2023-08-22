@@ -116,8 +116,6 @@ export const AccountProfile: FC<Props> = ({ user, btnTitle }) => {
     } else {
       router.push('/');
     }
-
-    // TODO: agregar las env de uploadthing
   };
 
   return (

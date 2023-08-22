@@ -1,6 +1,7 @@
 import { Schema, model, models } from 'mongoose';
 
 const userSchema = new Schema({
+  // este id corresponde al que nos asigna clerk cuando nos registramos o logeamos, es diferente al de mongoose
   id: {
     type: String,
     required: true,
@@ -27,6 +28,6 @@ const userSchema = new Schema({
   communities: [{ type: Schema.Types.ObjectId, ref: 'Community' }],
 });
 
-const UserModel = models.UserModel && model('UserModel', userSchema);
+const User = models.User || model('User', userSchema);
 
-export default UserModel;
+export default User;

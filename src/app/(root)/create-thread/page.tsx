@@ -20,9 +20,8 @@ const Page = async () => {
   return (
     <>
       <h1 className='head-text'>Create Thread</h1>
-      
-      <PostThreads userId={userData.id.toString()} />
 
+      <PostThreads userId={userData.id.toString()} />
     </>
   );
 };

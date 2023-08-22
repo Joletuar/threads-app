@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
-import UserModel from '@/lib/models/user.model';
+import User from '@/lib/models/user.model';
 
 import { connectToDB } from '../mongoose';
 
@@ -26,7 +26,7 @@ export async function updateUser({
   await connectToDB();
 
   try {
-    await UserModel.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { id: userId },
       {
         username: username.toLowerCase(),
@@ -52,12 +52,12 @@ export async function fetchUser(userId: string) {
   await connectToDB();
 
   try {
-    const user = await UserModel.findById(userId).lean();
+    const user = await User.findOne({ id: userId });
     // .populate({
     //   path: "communitty",
     //   model: Community
     // })
-    
+
     return user
       ? {
           id: user._id,
