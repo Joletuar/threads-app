@@ -1,9 +1,11 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { connectToDB } from '../mongoose';
+
 import Thread from '../models/thread.models';
 import User from '../models/user.model';
-import { revalidatePath } from 'next/cache';
 
 interface Params {
   text: string;
@@ -79,5 +81,43 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
     return { posts, isNext };
   } catch (error: any) {
     throw new Error(`Failed to get posts: ${error?.message}`);
+  }
+}
+
+export async function fetchThreadById(threadId: string) {
+  await connectToDB();
+
+  try {
+    // TODO: populate community
+    const theadInfo = await Thread.findById(threadId)
+      .populate({
+        path: 'author',
+        model: User,
+        select: ['_id', 'id', 'name', 'image'],
+      })
+      .populate({
+        path: 'children',
+        model: Thread,
+        populate: [
+          {
+            path: 'author',
+            model: User,
+            select: ['_id', 'id', 'name', 'image', 'parentId'],
+          },
+          {
+            path: 'children',
+            model: Thread,
+            populate: {
+              path: 'author',
+              model: User,
+              select: ['_id', 'id', 'name', 'image', 'parentId'],
+            },
+          },
+        ],
+      });
+
+    return theadInfo;
+  } catch (error: any) {
+    throw new Error(`Failed to get thread information: ${error?.message}`);
   }
 }
