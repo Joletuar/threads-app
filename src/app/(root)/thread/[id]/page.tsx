@@ -7,6 +7,7 @@ import { ThreadCard } from '@/components/cards/ThreadCard';
 
 import { fetchThreadById } from '@/lib/actions/thread.actions';
 import { fetchUser } from '@/lib/actions/user.actions';
+import { Comments } from '@/components/forms/Comments';
 
 interface Props {
   params: {
@@ -40,6 +41,14 @@ const ThreadPage: FC<Props> = async ({ params }) => {
           community={threadDetails.community}
           createAt={threadDetails.createdAt.toLocaleString()}
           comments={threadDetails.children}
+        />
+      </div>
+
+      <div className='mt-7 '>
+        <Comments
+          threadId={threadDetails.id}
+          currentUserImg={userInfo.image}
+          currentId={userInfo.id.toString()}
         />
       </div>
     </section>

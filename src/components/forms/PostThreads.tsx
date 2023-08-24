@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '../ui/textarea';
 
-import { CommentValidation } from '@/lib/validations/thread';
+import { ThreadValidation } from '@/lib/validations/thread';
 import { createThread } from '@/lib/actions/thread.actions';
 
 interface Props {
@@ -31,14 +31,14 @@ export const PostThreads: FC<Props> = ({ userId }) => {
   const pathname = usePathname();
 
   const form = useForm({
-    resolver: zodResolver(CommentValidation), // propiedad que nos permite agregar un validador externo
+    resolver: zodResolver(ThreadValidation), // propiedad que nos permite agregar un validador externo
     defaultValues: {
       thread: '',
       accountId: userId,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
+  const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     // creamos el nuevo thread
     await createThread({
       text: values.thread,
