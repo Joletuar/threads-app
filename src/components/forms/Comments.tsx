@@ -15,8 +15,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  FormLabel
 } from '@/components/ui/form';
 import { Input } from '../ui/input';
 
@@ -33,6 +32,7 @@ export const Comments: FC<Props> = ({
   threadId,
   currentUserImg,
 }) => {
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -63,10 +63,10 @@ export const Comments: FC<Props> = ({
           control={form.control}
           name='thread'
           render={({ field }) => (
-            <FormItem className='flex gap-3 flex-col w-full'>
-              <FormLabel className='text-base-semibold text-light-2 bg-red-600 h-[48px]'>
+            <FormItem className='flex w-full items-center gap-3'>
+              <FormLabel>
                 <Image
-                  className='rounded-full'
+                  className='rounded-full object-cover'
                   src={currentUserImg}
                   alt='User image Profile'
                   width={48}
@@ -81,13 +81,12 @@ export const Comments: FC<Props> = ({
                   className='no-focus text-light-1 outline-none'
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type='submit' className='bg-primary-500'>
-          Crear Thread
+        <Button type='submit' className='comment-form_btn'>
+          Comentar
         </Button>
       </form>
     </Form>

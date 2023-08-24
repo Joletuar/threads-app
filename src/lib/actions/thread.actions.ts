@@ -121,3 +121,40 @@ export async function fetchThreadById(threadId: string) {
     throw new Error(`Failed to get thread information: ${error?.message}`);
   }
 }
+
+export async function addCommentToThread(threadId: string, commentText: string, userId: string, path: string) {
+ 
+  await connectToDB()
+
+  try {
+
+    // obtenemos el thread original
+    const originalThread = await Thread.findById(threadId);
+
+    if (!originalThread) {
+      throw new Error(`Failed to get thread`);
+    }
+
+    // creamos el nuevo comentario/thread
+    const commentThread = new Thread({
+      text: commentText,
+      author: userId,
+      parentId: threadId,
+    });
+
+    // guardamos el thread
+    const savedCommentThread = await commentThread.save();
+
+    // actualizamos el thread original para incluir un nuevo children id
+    originalThread.children.push(savedCommentThread._id);
+
+    // guardamos la actualizaciones del thread original
+    await originalThread.save();
+
+     // revalidamos el path
+    revalidatePath(path);
+  
+  } catch (error: any) {
+    throw new Error(`Failed to get thread information: ${error?.message}`);
+  }
+}
