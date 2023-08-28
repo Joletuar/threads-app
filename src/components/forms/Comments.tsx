@@ -20,6 +20,7 @@ import {
 import { Input } from '../ui/input';
 
 import { CommentValidation } from '@/lib/validations/thread';
+import { addCommentToThread } from '@/lib/actions/thread.actions';
 
 interface Props {
   threadId: string;
@@ -44,16 +45,17 @@ export const Comments: FC<Props> = ({
   });
 
   const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-    // creamos el nuevo thread
-    //   await createThread({
-    //     text: values.thread,
-    //     author: userId,
-    //     communityId: null,
-    //     pathname,
-    //   });
+    // creamos el nuevo thread/comment
 
-    // redirigimos al home
-    router.push('/');
+      await addCommentToThread({
+        threadId: threadId,
+        commentText: values.thread,
+        userId: currentId,
+        path: pathname
+      });
+
+      form.reset();      
+
   };
 
   return (

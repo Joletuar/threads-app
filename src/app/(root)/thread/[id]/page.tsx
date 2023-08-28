@@ -51,6 +51,30 @@ const ThreadPage: FC<Props> = async ({ params }) => {
           currentId={userInfo.id.toString()}
         />
       </div>
+
+      <div className='mt-10'>
+
+          {
+            threadDetails.children.map((childrenItem: any) => (
+
+            <ThreadCard
+              key={childrenItem._id}
+              id={childrenItem._id}
+              currentUserId={''}
+              parentId={childrenItem.parentId?.toString()}
+              content={childrenItem.text}
+              author={childrenItem.author}
+              community={childrenItem.community}
+              createAt={childrenItem.createdAt.toLocaleString()}
+              comments={childrenItem.children}
+              isComment
+            />
+
+            ))
+          }
+
+      </div>
+
     </section>
   );
 };
