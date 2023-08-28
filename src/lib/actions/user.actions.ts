@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import User from '@/lib/models/user.model';
 
 import { connectToDB } from '../mongoose';
+import Thread from '../models/thread.models';
 
 interface Params {
   userId: string;
@@ -72,5 +73,32 @@ export async function fetchUser(userId: string) {
       : null;
   } catch (error: any) {
     throw new Error(`Failed to get user: ${error?.message}`);
+  }
+}
+
+export async function fetchUserPosts(userId: string) {
+  await connectToDB();
+
+  try {
+    // obtenemos todos los threads que tengan el id especificado
+    // TODO: populate community
+    const postsUser = await User.findById(userId).populate({
+      path: 'Thread',
+      model: Thread,
+      populate: {
+        path: 'children',
+        model: Thread,
+        populate: {
+          path: 'author',
+          model: 'User',
+          select: ['name', 'image', 'id'],
+        },
+      },
+    });
+
+    return postsUser
+
+  } catch (error: any) {
+    throw new Error(`Failed to get user posts: ${error?.message}`);
   }
 }

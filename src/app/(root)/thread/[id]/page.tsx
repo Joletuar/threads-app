@@ -34,7 +34,7 @@ const ThreadPage: FC<Props> = async ({ params }) => {
         <ThreadCard
           key={threadDetails.id}
           id={threadDetails.id}
-          currentUserId={''}
+          currentUserId={user?.id || ''}
           parentId={threadDetails.parentId?.toString()}
           content={threadDetails.text}
           author={threadDetails.author}
@@ -60,7 +60,7 @@ const ThreadPage: FC<Props> = async ({ params }) => {
             <ThreadCard
               key={childrenItem._id}
               id={childrenItem._id}
-              currentUserId={''}
+              currentUserId={user?.id || ''}
               parentId={childrenItem.parentId?.toString()}
               content={childrenItem.text}
               author={childrenItem.author}
