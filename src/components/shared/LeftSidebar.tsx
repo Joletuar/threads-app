@@ -5,11 +5,13 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { sidebarLinks } from '@/constants';
-import { SignOutButton, SignedIn } from '@clerk/clerk-react';
+import { SignOutButton, SignedIn, useAuth } from '@clerk/clerk-react';
 
 export const LeftSidebar = () => {
   const router = useRouter(); // solo funciona en componentes de cliente, por lo que se debe de activar el "use client"
   const pathname = usePathname(); // solo funciona en componentes de cliente, por lo que se debe de activar el "use client"
+
+  const { userId } = useAuth();
 
   return (
     <section className='custom-scrollbar leftsidebar'>
@@ -20,6 +22,8 @@ export const LeftSidebar = () => {
           const isActive =
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
+
+          if (link.route === '/profile') link.route = `${link.route}/${userId}`;
 
           return (
             <li key={link.label}>
