@@ -122,12 +122,20 @@ export async function fetchThreadById(threadId: string) {
   }
 }
 
-export async function addCommentToThread({threadId, commentText, userId, path}:{threadId: string;commentText: string; userId: string; path: string}) {
- 
-  await connectToDB()
+export async function addCommentToThread({
+  threadId,
+  commentText,
+  userId,
+  path,
+}: {
+  threadId: string;
+  commentText: string;
+  userId: string;
+  path: string;
+}) {
+  await connectToDB();
 
   try {
-
     // obtenemos el thread original
     const originalThread = await Thread.findById(threadId);
 
@@ -151,9 +159,8 @@ export async function addCommentToThread({threadId, commentText, userId, path}:{
     // guardamos la actualizaciones del thread original
     await originalThread.save();
 
-     // revalidamos el path
+    // revalidamos el path
     revalidatePath(path);
-  
   } catch (error: any) {
     throw new Error(`Failed to get thread information: ${error?.message}`);
   }

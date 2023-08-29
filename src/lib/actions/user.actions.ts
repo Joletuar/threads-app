@@ -83,7 +83,7 @@ export async function fetchUserPosts(userId: string) {
     // obtenemos todos los threads que tengan el id especificado
     // TODO: populate community
     const postsUser = await User.findById(userId).populate({
-      path: 'Thread',
+      path: 'threads',
       model: Thread,
       populate: {
         path: 'children',
@@ -96,8 +96,7 @@ export async function fetchUserPosts(userId: string) {
       },
     });
 
-    return postsUser
-
+    return postsUser;
   } catch (error: any) {
     throw new Error(`Failed to get user posts: ${error?.message}`);
   }

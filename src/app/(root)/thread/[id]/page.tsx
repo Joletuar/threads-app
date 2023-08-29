@@ -30,6 +30,8 @@ const ThreadPage: FC<Props> = async ({ params }) => {
 
   return (
     <section className='relative'>
+      {/* thread principal */}
+
       <div>
         <ThreadCard
           key={threadDetails.id}
@@ -44,6 +46,8 @@ const ThreadPage: FC<Props> = async ({ params }) => {
         />
       </div>
 
+      {/* componente para comentar */}
+
       <div className='mt-7 '>
         <Comments
           threadId={threadDetails.id}
@@ -52,29 +56,24 @@ const ThreadPage: FC<Props> = async ({ params }) => {
         />
       </div>
 
+      {/* listado de threads hijos */}
+
       <div className='mt-10'>
-
-          {
-            threadDetails.children.map((childrenItem: any) => (
-
-            <ThreadCard
-              key={childrenItem._id}
-              id={childrenItem._id}
-              currentUserId={user?.id || ''}
-              parentId={childrenItem.parentId?.toString()}
-              content={childrenItem.text}
-              author={childrenItem.author}
-              community={childrenItem.community}
-              createAt={childrenItem.createdAt.toLocaleString()}
-              comments={childrenItem.children}
-              isComment
-            />
-
-            ))
-          }
-
+        {threadDetails.children.map((childrenItem: any) => (
+          <ThreadCard
+            key={childrenItem._id}
+            id={childrenItem._id}
+            currentUserId={user?.id || ''}
+            parentId={childrenItem.parentId?.toString()}
+            content={childrenItem.text}
+            author={childrenItem.author}
+            community={childrenItem.community}
+            createAt={childrenItem.createdAt.toLocaleString()}
+            comments={childrenItem.children}
+            isComment
+          />
+        ))}
       </div>
-
     </section>
   );
 };

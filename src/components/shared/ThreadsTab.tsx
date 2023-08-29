@@ -29,7 +29,7 @@ export const ThreadsTab: FC<Props> = async ({
           parentId={thread.parentId?.toString()}
           content={thread.text}
           author={
-            thread.author === 'User'
+            accountType === 'User'
               ? {
                   name: result.name,
                   image: result.image,

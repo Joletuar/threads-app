@@ -15,7 +15,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel
+  FormLabel,
 } from '@/components/ui/form';
 import { Input } from '../ui/input';
 
@@ -33,7 +33,6 @@ export const Comments: FC<Props> = ({
   threadId,
   currentUserImg,
 }) => {
-
   const router = useRouter();
   const pathname = usePathname();
 
@@ -47,15 +46,14 @@ export const Comments: FC<Props> = ({
   const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
     // creamos el nuevo thread/comment
 
-      await addCommentToThread({
-        threadId: threadId,
-        commentText: values.thread,
-        userId: currentId,
-        path: pathname
-      });
+    await addCommentToThread({
+      threadId: threadId,
+      commentText: values.thread,
+      userId: currentId,
+      path: pathname,
+    });
 
-      form.reset();      
-
+    form.reset();
   };
 
   return (
@@ -68,11 +66,11 @@ export const Comments: FC<Props> = ({
             <FormItem className='flex w-full items-center gap-3'>
               <FormLabel>
                 <Image
-                  className='rounded-full object-cover'
                   src={currentUserImg}
                   alt='User image Profile'
                   width={48}
                   height={48}
+                  className='rounded-full object-cover'
                 />
               </FormLabel>
               <FormControl className='border-none bg-transparent'>
