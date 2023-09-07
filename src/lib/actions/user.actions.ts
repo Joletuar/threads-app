@@ -6,7 +6,7 @@ import User from '@/lib/models/user.model';
 import { FilterQuery, SortOrder } from 'mongoose';
 
 import { connectToDB } from '../mongoose';
-import Thread from '../models/thread.models';
+import Thread from '../models/thread.model';
 
 interface Params {
   userId: string;
