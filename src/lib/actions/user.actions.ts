@@ -158,3 +158,31 @@ export async function fetchUsers({
     throw new Error(`Failed to get users: ${error?.message}`);
   }
 }
+
+export async function getActivity(userId: string) {
+  await connectToDB();
+
+  try {
+    // obtenemos los threads que tengan el id especificado
+    const userThreads = await Thread.find({ author: userId });
+
+    // obtenemos los ids de los threads que tengan children
+    const childrenThreadsId = userThreads.flatMap(
+      (userThread) => userThread.children
+    );
+
+    // obtenemos los threads que no sean del usuario actual
+    const replies = await Thread.find({
+      _id: { $in: childrenThreadsId },
+      author: { $ne: userId },
+    }).populate({
+      path: 'author',
+      model: 'User',
+      select: ['name', 'image', '_id'],
+    });
+
+    return replies;
+  } catch (error: any) {
+    throw new Error(`Failed to get activity: ${error?.message}`);
+  }
+}

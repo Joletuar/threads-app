@@ -26,7 +26,11 @@ const RootLayout: FC<Props> = ({ children }) => {
           <link rel='icon' href='/favicon.ico' sizes='any' />
         </head>
         {/* llamamos la clase de la fuente en nuestro body */}
-        <body className={`${inter.className} bg-dark-1 `}>{children}</body>
+        <body className={`${inter.className} bg-dark-1 `}>
+          <div className='flex w-full justify-center items-center min-h-screen'>
+            {children}
+          </div>
+        </body>
       </html>
     </ClerkProvider>
   );

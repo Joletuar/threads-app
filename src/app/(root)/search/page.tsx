@@ -41,7 +41,7 @@ const SearchPage = async () => {
                 id={user.id}
                 name={user.name}
                 username={user.username}
-                imgUrl={user.imgUrl}
+                imgUrl={user.image}
                 personType='User'
               />
             ))}
