@@ -149,6 +149,10 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
           model: 'User',
           select: ['_id', 'parentId', 'image'],
         },
+      })
+      .populate({
+        path: 'community',
+        model: Community,
       });
 
     // número total de posts
