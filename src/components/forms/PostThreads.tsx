@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useOrganization } from '@clerk/nextjs';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +30,7 @@ interface Props {
 export const PostThreads: FC<Props> = ({ userId }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { organization } = useOrganization();
 
   const form = useForm({
     resolver: zodResolver(ThreadValidation), // propiedad que nos permite agregar un validador externo
@@ -43,7 +45,7 @@ export const PostThreads: FC<Props> = ({ userId }) => {
     await createThread({
       text: values.thread,
       author: userId,
-      communityId: null,
+      communityId: organization ? organization!.id : null,
       pathname,
     });
 

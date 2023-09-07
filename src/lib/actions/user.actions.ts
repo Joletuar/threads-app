@@ -7,6 +7,7 @@ import { FilterQuery, SortOrder } from 'mongoose';
 
 import { connectToDB } from '../mongoose';
 import Thread from '../models/thread.model';
+import Community from '../models/community.model';
 
 interface Params {
   userId: string;
@@ -54,11 +55,10 @@ export async function fetchUser(userId: string) {
   await connectToDB();
 
   try {
-    const user = await User.findOne({ id: userId });
-    // .populate({
-    //   path: "communitty",
-    //   model: Community
-    // })
+    const user = await User.findOne({ id: userId }).populate({
+      path: 'communities',
+      model: Community,
+    });
 
     return user
       ? {
@@ -82,19 +82,25 @@ export async function fetchUserPosts(userId: string) {
 
   try {
     // obtenemos todos los threads que tengan el id especificado
-    // TODO: populate community
-    const postsUser = await User.findById(userId).populate({
+    const postsUser = await User.findOne({ id: userId }).populate({
       path: 'threads',
       model: Thread,
-      populate: {
-        path: 'children',
-        model: Thread,
-        populate: {
-          path: 'author',
-          model: 'User',
-          select: ['name', 'image', 'id'],
+      populate: [
+        {
+          path: 'communities',
+          model: Community,
+          select: 'name id image _id', // Select the "name" and "_id" fields from the "Community" model
         },
-      },
+        {
+          path: 'children',
+          model: Thread,
+          populate: {
+            path: 'author',
+            model: User,
+            select: 'name image id', // Select the "name" and "_id" fields from the "User" model
+          },
+        },
+      ],
     });
 
     return postsUser;

@@ -2,6 +2,7 @@ import { type FC } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { formatDateString } from '@/lib/utils';
 
 interface Author {
   name: string;
@@ -117,6 +118,26 @@ export const ThreadCard: FC<Props> = ({
             </div>
           </div>
         </div>
+        {/* TODO: Eliminar thread */}
+        {/* TODO: Show comment logos */}
+
+        {!isComment && community && (
+          <Link
+            href={`/communities/${community.id}`}
+            className='mt-5 flex items-center'
+          >
+            <p className='text-subline-medium text-gray-1'>
+              {formatDateString(createAt)} - {community.name} Community
+            </p>
+            <Image
+              src={community.image}
+              alt={community.name}
+              width={14}
+              height={14}
+              className='ml-1 rounded-full object-cover'
+            />
+          </Link>
+        )}
       </div>
     </article>
   );
