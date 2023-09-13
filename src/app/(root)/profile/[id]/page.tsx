@@ -40,6 +40,7 @@ const PageProfile: FC<Props> = async ({ params }) => {
         username={userInfo.username}
         image={userInfo.image}
         bio={userInfo.bio}
+        type='User'
       />
 
       {/* etiquetas del perfil */}

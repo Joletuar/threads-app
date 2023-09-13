@@ -1,6 +1,6 @@
 'use server';
 
-import { FilterQuery, SortOrder } from 'mongoose';
+import { FilterQuery, SortOrder, model } from 'mongoose';
 
 import Community from '../models/community.model';
 import Thread from '../models/thread.model';
@@ -55,11 +55,17 @@ export async function fetchCommunityDetails(id: string) {
   await connectToDB();
 
   try {
-    const communityDetails = await Community.findOne({ id }).populate({
-      path: 'createdBy',
-      model: User,
-      select: ['name', 'username', 'image', '_id', 'id'],
-    });
+    const communityDetails = await Community.findOne({ id }).populate([
+      {
+        path: 'createdBy',
+        model: User,
+      },
+      {
+        path: 'members',
+        model: User,
+        select: 'name username image _id id',
+      },
+    ]);
 
     return communityDetails;
   } catch (error) {

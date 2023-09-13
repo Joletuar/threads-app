@@ -41,7 +41,7 @@ const ThreadPage: FC<Props> = async ({ params }) => {
           content={threadDetails.text}
           author={threadDetails.author}
           community={threadDetails.community}
-          createAt={threadDetails.createdAt.toLocaleString()}
+          createdAt={threadDetails.createdAt.toLocaleString()}
           comments={threadDetails.children}
         />
       </div>
@@ -68,7 +68,7 @@ const ThreadPage: FC<Props> = async ({ params }) => {
             content={childrenItem.text}
             author={childrenItem.author}
             community={childrenItem.community}
-            createAt={childrenItem.createdAt.toLocaleString()}
+            createdAt={childrenItem.createdAt.toLocaleString()}
             comments={childrenItem.children}
             isComment
           />

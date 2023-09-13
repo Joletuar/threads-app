@@ -181,6 +181,11 @@ export async function fetchThreadById(threadId: string) {
         select: ['_id', 'id', 'name', 'image'],
       })
       .populate({
+        path: 'community',
+        model: Community,
+        select: ['_id', 'id', 'name', 'image'],
+      })
+      .populate({
         path: 'children',
         model: Thread,
         populate: [

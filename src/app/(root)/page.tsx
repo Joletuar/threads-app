@@ -29,7 +29,7 @@ export default async function Home() {
                 content={post.text}
                 author={post.author}
                 community={post.community}
-                createAt={post.createdAt.toLocaleString()}
+                createdAt={post.createdAt.toLocaleString()}
                 comments={post.children}
               />
             ))}
